@@ -19,15 +19,27 @@ def emotion_detector(
         json=input_json
     )
 
-    text = json.loads(response.text)
-    emotion_scores = text["emotionPredictions"][0]["emotion"]
-    dominant_emotion_key = max(emotion_scores, key=lambda k: emotion_scores[k])
-    return_text = {
-        "anger": emotion_scores["anger"],
-        "disgust": emotion_scores["disgust"],
-        "fear": emotion_scores["fear"],
-        "joy": emotion_scores["joy"],
-        "sadness": emotion_scores["sadness"],
-        "dominant_emotion": dominant_emotion_key
-    }
+    if response.status_code == 400:
+        return_text = {
+            "anger": None,
+            "disgust": None,
+            "fear": None,
+            "joy": None,
+            "sadness": None,
+            "dominant_emotion": None
+        }
+    
+    else:
+        text = json.loads(response.text)
+        emotion_scores = text["emotionPredictions"][0]["emotion"]
+        dominant_emotion_key = max(emotion_scores, key=lambda k: emotion_scores[k])
+        return_text = {
+            "anger": emotion_scores["anger"],
+            "disgust": emotion_scores["disgust"],
+            "fear": emotion_scores["fear"],
+            "joy": emotion_scores["joy"],
+            "sadness": emotion_scores["sadness"],
+            "dominant_emotion": dominant_emotion_key
+        }
+    
     return return_text
